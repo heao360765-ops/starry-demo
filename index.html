@@ -5,223 +5,262 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Starry AI 万物识别罗盘 · 走到展品前才知道它是谁</title>
 <style>
-  :root{ --cy:#5fe6ff; --ink:#e8eef4; --dim:#8b98a7; }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-  body{
-    font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
-    background:#05060a; color:var(--ink); -webkit-tap-highlight-color:transparent;
-  }
-  #app{ position:fixed; inset:0; z-index:0; }
-  canvas{ display:block; }
+:root{ --cy:#5fe6ff; --ink:#e8eef4; --dim:#8b98a7; }
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:-apple-system,"SF Pro Display","PingFang SC","Helvetica Neue","Microsoft YaHei",system-ui,sans-serif;
+  background:#05060a; color:var(--ink);
+  -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:antialiased;
+}
+#app{ position:fixed; inset:0; z-index:0; }
+canvas{ display:block; }
 
-  /* ============ 顶栏 ============ */
-  nav{
-    position:fixed; top:0; left:0; right:0; z-index:20;
-    display:flex; align-items:center; gap:26px;
-    padding:16px 34px;
-    background:linear-gradient(180deg, rgba(5,6,10,.85), rgba(5,6,10,0));
-    backdrop-filter:blur(3px);
-    transition:background .3s;
-  }
-  nav .logo{ font-size:14px; letter-spacing:.34em; color:#cfe0ee; font-weight:600; }
-  nav .logo b{ color:var(--cy); }
-  nav .links{ display:flex; gap:22px; margin-left:auto; }
-  nav .links a{ font-size:12.5px; color:var(--dim); text-decoration:none; letter-spacing:.1em; transition:.2s; }
-  nav .links a:hover{ color:#e2f4fd; }
-  nav .cta{
-    font-size:12.5px; padding:8px 16px; border-radius:9px; text-decoration:none;
-    color:#04121a; background:var(--cy); font-weight:600; letter-spacing:.08em;
-    box-shadow:0 0 20px rgba(95,230,255,.35);
-  }
+/* ---------- 顶栏 ---------- */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; align-items:center; gap:26px; padding:16px 34px;
+  background:linear-gradient(180deg, rgba(5,6,10,.88), rgba(5,6,10,0));
+  backdrop-filter:blur(6px);
+}
+nav .logo{ font-size:13px; letter-spacing:.3em; color:#cfe0ee; font-weight:600; }
+nav .logo b{ color:var(--cy); }
+nav .links{ display:flex; gap:24px; margin-left:auto; }
+nav .links a{ font-size:12.5px; color:var(--dim); text-decoration:none; letter-spacing:.08em; transition:.2s; }
+nav .links a:hover{ color:#e2f4fd; }
+nav .cta{
+  font-size:12.5px; padding:8px 17px; border-radius:980px; text-decoration:none;
+  color:#04121a; background:var(--cy); font-weight:600; letter-spacing:.04em;
+}
 
-  /* ============ 首屏 ============ */
-  .hero{ position:relative; z-index:2; height:100vh; pointer-events:none; }
-  .hero .txt{ position:absolute; left:34px; top:118px; }
-  .hero .k{ font-size:11px; letter-spacing:.34em; color:#7d8a99; margin-bottom:14px; }
-  .hero h1{ font-size:clamp(30px,4.2vw,54px); line-height:1.18; font-weight:600; letter-spacing:.02em; }
-  .hero h1 span{ color:var(--cy); }
-  .hero p{ margin-top:16px; font-size:14px; color:var(--dim); letter-spacing:.05em; line-height:1.9; max-width:380px; }
-  .hero .cta{ margin-top:26px; display:flex; gap:12px; pointer-events:auto; }
-  .hero .cta a{ text-decoration:none; font-size:13px; padding:11px 22px; border-radius:11px; letter-spacing:.08em; }
-  .hero .cta .a1{ color:#04121a; background:var(--cy); font-weight:600; box-shadow:0 0 24px rgba(95,230,255,.4); }
-  .hero .cta .a2{ color:#cfe0ee; border:1px solid rgba(255,255,255,.16); }
-  .scrollhint{
-    position:absolute; left:50%; bottom:118px; transform:translateX(-50%);
-    font-size:11px; letter-spacing:.3em; color:#5d6a77; animation:bob 2.4s ease-in-out infinite;
-  }
-  @keyframes bob{ 0%,100%{ transform:translate(-50%,0);} 50%{ transform:translate(-50%,7px);} }
+/* ---------- 首屏 ---------- */
+.hero{ position:relative; z-index:2; height:100vh; pointer-events:none; }
+.hero .txt{ position:absolute; left:34px; top:120px; max-width:520px; }
+.hero .k{ font-size:10.5px; letter-spacing:.32em; color:#7d8a99; margin-bottom:20px; }
+.hero h1{ font-size:clamp(30px,4.4vw,56px); line-height:1.14; font-weight:600; letter-spacing:-.02em; }
+.hero h1 span{ color:var(--cy); }
+.hero p{ margin-top:22px; font-size:14.5px; color:var(--dim); letter-spacing:.02em; line-height:1.9; }
+.hero .cta{ margin-top:30px; display:flex; gap:12px; pointer-events:auto; }
+.hero .cta a{ text-decoration:none; font-size:13px; padding:12px 24px; border-radius:980px; letter-spacing:.04em; }
+.hero .cta .a1{ color:#04121a; background:var(--cy); font-weight:600; }
+.hero .cta .a2{ color:#cfe0ee; border:1px solid rgba(255,255,255,.22); }
+.scrollhint{
+  position:absolute; left:50%; bottom:120px; transform:translateX(-50%);
+  font-size:10px; letter-spacing:.3em; color:#5d6a77;
+  animation:bob 2.4s ease-in-out infinite;
+}
+@keyframes bob{ 0%,100%{transform:translate(-50%,0);} 50%{transform:translate(-50%,8px);} }
 
-  /* ============ 拆解控制条 ============ */
-  .bar{
-    position:fixed; left:50%; bottom:30px; transform:translateX(-50%); z-index:30;
-    display:flex; align-items:center; gap:18px;
-    padding:13px 20px; border-radius:16px;
-    background:rgba(12,16,22,.68); border:1px solid rgba(255,255,255,.07);
-    backdrop-filter:blur(14px); box-shadow:0 18px 50px rgba(0,0,0,.5);
-    transition:opacity .35s, transform .35s;
-  }
-  .bar.hide{ opacity:0; transform:translate(-50%,26px); pointer-events:none; }
-  .bar .cap{ font-size:11px; letter-spacing:.2em; color:#7d8a99; }
-  .slider{ -webkit-appearance:none; appearance:none; width:min(260px,32vw); height:3px;
-    border-radius:3px; background:rgba(255,255,255,.14); outline:none; }
-  .slider::-webkit-slider-thumb{
-    -webkit-appearance:none; width:17px; height:17px; border-radius:50%;
-    background:var(--cy); cursor:pointer; box-shadow:0 0 14px rgba(95,230,255,.8); border:3px solid #0c1016; }
-  .val{ width:48px; font-size:15px; color:var(--cy); font-variant-numeric:tabular-nums; }
-  .btn{ padding:9px 16px; border-radius:10px; cursor:pointer; font-size:12.5px; white-space:nowrap;
-    letter-spacing:.08em; color:#d8f4ff; background:rgba(95,230,255,.10);
-    border:1px solid rgba(95,230,255,.35); transition:.18s; }
-  .btn:hover{ background:rgba(95,230,255,.2); }
-  .btn.on{ background:rgba(95,230,255,.22); border-color:rgba(95,230,255,.6); }
-  .sep{ width:1px; height:22px; background:rgba(255,255,255,.1); }
+/* ---------- 拆解控制条 ---------- */
+.bar{
+  position:fixed; left:50%; bottom:30px; transform:translateX(-50%); z-index:30;
+  display:flex; align-items:center; gap:18px; padding:13px 20px; border-radius:18px;
+  background:rgba(12,16,22,.7); border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(16px); box-shadow:0 18px 50px rgba(0,0,0,.5);
+  transition:opacity .35s, transform .35s;
+}
+.bar.hide{ opacity:0; transform:translate(-50%,26px); pointer-events:none; }
+.bar .cap{ font-size:11px; letter-spacing:.2em; color:#7d8a99; }
+.slider{ -webkit-appearance:none; appearance:none; width:min(280px,32vw); height:3px;
+  border-radius:3px; background:rgba(255,255,255,.16); outline:none; }
+.slider::-webkit-slider-thumb{
+  -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+  background:var(--cy); cursor:pointer; box-shadow:0 0 14px rgba(95,230,255,.8); border:3px solid #0c1016; }
+.val{ width:48px; font-size:14px; color:var(--cy); font-variant-numeric:tabular-nums; }
+.btn{ padding:9px 17px; border-radius:980px; cursor:pointer; font-size:12.5px; white-space:nowrap;
+  letter-spacing:.04em; color:#d8f4ff; background:rgba(95,230,255,.10);
+  border:1px solid rgba(95,230,255,.32); transition:.18s; }
+.btn:hover{ background:rgba(95,230,255,.2); }
+.btn.on{ background:rgba(95,230,255,.22); border-color:rgba(95,230,255,.6); }
+.sep{ width:1px; height:22px; background:rgba(255,255,255,.1); }
 
-  /* 屏幕样式 */
-  .styles{
-    position:fixed; left:50%; bottom:96px; transform:translateX(-50%); z-index:30;
-    display:flex; align-items:center; gap:7px;
-    padding:8px 12px; border-radius:14px;
-    background:rgba(12,16,22,.6); border:1px solid rgba(255,255,255,.06);
-    backdrop-filter:blur(12px); transition:opacity .35s, transform .35s;
-  }
-  .styles.hide{ opacity:0; transform:translate(-50%,26px); pointer-events:none; }
-  .styles .cap{ font-size:10.5px; letter-spacing:.2em; color:#6f7d8b; margin-right:4px; }
-  .chip{ padding:7px 13px; border-radius:9px; font-size:12px; letter-spacing:.06em;
-    color:#9db0c1; cursor:pointer; border:1px solid transparent; transition:.16s; white-space:nowrap; }
-  .chip:hover{ color:#e2f4fd; background:rgba(255,255,255,.05); }
-  .chip.on{ color:#04121a; background:var(--cy); font-weight:600; box-shadow:0 0 18px rgba(95,230,255,.45); }
+.styles{
+  position:fixed; left:50%; bottom:100px; transform:translateX(-50%); z-index:30;
+  display:flex; align-items:center; gap:6px; padding:7px 10px; border-radius:980px;
+  background:rgba(12,16,22,.6); border:1px solid rgba(255,255,255,.07);
+  backdrop-filter:blur(12px); transition:opacity .35s, transform .35s;
+}
+.styles.hide{ opacity:0; transform:translate(-50%,26px); pointer-events:none; }
+.styles .cap{ font-size:10.5px; letter-spacing:.2em; color:#6f7d8b; margin-right:4px; }
+.chip{ padding:6px 13px; border-radius:980px; font-size:12px; letter-spacing:.04em;
+  color:#9db0c1; cursor:pointer; transition:.16s; white-space:nowrap; }
+.chip:hover{ color:#e2f4fd; background:rgba(255,255,255,.06); }
+.chip.on{ color:#04121a; background:var(--cy); font-weight:600; }
 
-  /* 零件标签 */
-  .labels{ position:fixed; inset:0; pointer-events:none; z-index:10; }
-  .lb{
-    position:absolute; transform:translate(-50%,-50%);
-    font-size:12px; color:#cfe6f2; letter-spacing:.06em; white-space:nowrap;
-    padding:4px 9px; border-radius:20px;
-    background:rgba(10,18,26,.6); border:1px solid rgba(95,230,255,.22);
-    backdrop-filter:blur(6px); opacity:0; transition:opacity .3s;
-  }
-  .lb i{ display:inline-block; width:5px; height:5px; border-radius:50%;
-        background:var(--cy); margin-right:7px; vertical-align:middle; box-shadow:0 0 8px var(--cy); }
+/* ---------- 标签 ---------- */
+.labels{ position:fixed; inset:0; pointer-events:none; z-index:10; }
+.lb{
+  position:absolute; transform:translate(-50%,-50%); font-size:11.5px; color:#cfe6f2;
+  letter-spacing:.05em; white-space:nowrap; padding:4px 10px; border-radius:980px;
+  background:rgba(10,18,26,.6); border:1px solid rgba(95,230,255,.22);
+  backdrop-filter:blur(6px); opacity:0; transition:opacity .3s;
+}
+.lb i{ display:inline-block; width:5px; height:5px; border-radius:50%;
+  background:var(--cy); margin-right:7px; vertical-align:middle; box-shadow:0 0 8px var(--cy); }
 
-  /* ============ 内容区 ============ */
-  .page{ position:relative; z-index:3; }
-  section{
-    position:relative;
-    padding:124px 34px;
-    max-width:1180px; margin:0 auto;
-  }
-  .sec-k{ font-size:11px; letter-spacing:.34em; color:var(--cy); margin-bottom:14px; }
-  .sec-t{ font-size:clamp(22px,2.6vw,34px); font-weight:600; letter-spacing:.02em; line-height:1.35; }
-  .sec-d{ margin-top:24px; font-size:14.5px; color:var(--dim); line-height:2.15; max-width:660px; }
+/* ---------- 内容区 ---------- */
+.page{ position:relative; z-index:3; }
+.band{ background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.94) 10%, rgba(5,6,10,.97) 90%, rgba(5,6,10,0) 100%); }
+section{ position:relative; max-width:1120px; margin:0 auto; padding:150px 34px; }
 
-  .band{ background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.92) 12%, rgba(5,6,10,.96) 88%, rgba(5,6,10,0) 100%); }
+.eyebrow{ font-size:11px; letter-spacing:.34em; color:var(--cy); margin-bottom:22px; }
+.display{ font-size:clamp(32px,5vw,66px); line-height:1.1; letter-spacing:-.022em; font-weight:600; }
+.lead{ margin-top:26px; font-size:clamp(15px,1.4vw,18px); line-height:1.95; color:var(--dim); max-width:660px; }
+.center{ text-align:center; }
+.center .lead{ margin-left:auto; margin-right:auto; }
+.h3{ font-size:clamp(21px,2.5vw,32px); line-height:1.42; letter-spacing:-.01em; font-weight:600; }
 
-  .cards.plays{ grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
-  .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:22px; margin-top:70px; }
-  .card{
-    padding:34px 28px; border-radius:18px;
-    background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.07);
-    transition:.25s;
-  }
-  .card:hover{ background:rgba(95,230,255,.06); border-color:rgba(95,230,255,.28); transform:translateY(-3px); }
-  .card .n{ font-size:11px; letter-spacing:.22em; color:var(--cy); }
-  .card h3{ margin:16px 0 14px; font-size:17px; font-weight:600; letter-spacing:.02em; }
-  .card p{ font-size:13px; color:var(--dim); line-height:1.95; }
+.split{ display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; }
+.split.rev .txt{ order:2; }
+.panel{
+  border-radius:24px; padding:40px 36px; min-height:230px;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  display:flex; flex-direction:column; justify-content:center;
+}
+.mini{ font-size:10.5px; letter-spacing:.24em; color:#6f7d8b; margin-bottom:18px; }
+.mini-big{ font-size:clamp(19px,2.2vw,27px); line-height:1.6; font-weight:600; color:#eaf6fb; }
+.mini-tag{ display:inline-block; margin-top:10px; font-size:12px; font-weight:400; color:var(--cy); }
+.mini-sub{ margin-top:18px; font-size:12.5px; color:#7d8a99; letter-spacing:.04em; }
 
-  table.spec{ width:100%; margin-top:64px; border-collapse:collapse; font-size:13.5px; }
-  table.spec th, table.spec td{ padding:21px 20px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
-  table.spec th{ color:#7d8a99; font-weight:400; font-size:11.5px; letter-spacing:.16em; }
-  table.spec td:first-child{ color:var(--cy); width:120px; font-size:12px; letter-spacing:.1em; }
-  table.spec td:nth-child(2){ color:#c8d6e2; width:150px; }
-  table.spec td:nth-child(3){ color:var(--dim); line-height:1.85; }
+.steps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:40px; margin-top:66px; }
+.step .num{ font-size:11.5px; letter-spacing:.24em; color:var(--cy); margin-bottom:15px; }
+.step h4{ font-size:16.5px; font-weight:600; margin-bottom:10px; }
+.step p{ font-size:13.5px; line-height:1.95; color:var(--dim); }
 
-  .cards.three{ grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
-  .cards.five{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:16px; }
-  @media (max-width:1120px){ .cards.five{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
-  @media (max-width:720px){ .cards.five{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-  .cards.four{ grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
-  .quote.small{ margin-top:28px; font-size:13.5px; padding:20px 24px; border-left-color:rgba(95,230,255,.4); }
-  .quote{
-    margin-top:64px; padding:34px 40px; border-left:2px solid var(--cy);
-    font-size:clamp(16px,1.8vw,22px); line-height:2; color:#cfe0ee; letter-spacing:.03em;
-    background:linear-gradient(90deg, rgba(95,230,255,.06), rgba(95,230,255,0));
-  }  .buy{
-    margin-top:70px; padding:72px 44px; border-radius:24px; text-align:center;
-    background:radial-gradient(120% 120% at 50% 0%, rgba(95,230,255,.13), rgba(255,255,255,.02) 60%);
-    border:1px solid rgba(95,230,255,.22);
-  }
-  .buy h2{ font-size:clamp(20px,2.4vw,30px); font-weight:600; letter-spacing:.04em; }
-  .buy p{ margin-top:22px; font-size:14px; color:var(--dim); line-height:2; }
-  .buy .row{ margin-top:26px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-  .buy a{ text-decoration:none; font-size:13.5px; padding:13px 28px; border-radius:12px; letter-spacing:.08em; }
-  .buy .p1{ color:#04121a; background:var(--cy); font-weight:600; box-shadow:0 0 28px rgba(95,230,255,.4); }
-  .buy .p2{ color:#cfe0ee; border:1px solid rgba(255,255,255,.18); }
+.stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:44px; margin-top:88px; text-align:center; }
+.stat{ font-size:clamp(44px,6vw,82px); font-weight:600; letter-spacing:-.03em; line-height:1; color:#fff; }
+.stat small{ font-size:.26em; letter-spacing:0; color:var(--dim); margin-left:6px; }
+.stat-item p{ margin-top:16px; font-size:13px; color:var(--dim); letter-spacing:.03em; }
 
-  footer{
-    position:relative; z-index:3; padding:40px 34px 70px; text-align:center;
-    font-size:11.5px; color:#4d5866; letter-spacing:.14em;
-    background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.96) 40%);
-  }
-  /* 卡片栏数 */
-  .cards.three{ grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
-  .cards.five{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:16px; }
-  .cards.four{ grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+.list{ display:flex; flex-direction:column; gap:28px; }
+.li{ padding-left:22px; border-left:1px solid rgba(95,230,255,.35); }
+.li b{ display:block; font-size:15.5px; font-weight:600; margin-bottom:8px; }
+.li span{ font-size:13.5px; line-height:1.95; color:var(--dim); }
 
-  /* 引言 */
-  .quote{
-    margin-top:64px; padding:34px 40px; border-left:2px solid var(--cy);
-    font-size:clamp(16px,1.8vw,22px); line-height:2; color:#cfe0ee; letter-spacing:.03em;
-    background:linear-gradient(90deg, rgba(95,230,255,.06), rgba(95,230,255,0));
-  }
-  .quote.small{ margin-top:28px; font-size:13.5px; padding:20px 24px; border-left-color:rgba(95,230,255,.4); }
+.cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:22px; margin-top:64px; }
+.cards.three{ grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+.cards.four{ grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+.cards.five{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:16px; }
+.card{ padding:32px 26px; border-radius:20px; background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.07); transition:.25s; }
+.card:hover{ background:rgba(95,230,255,.05); border-color:rgba(95,230,255,.22); }
+.card .n{ font-size:10.5px; letter-spacing:.22em; color:var(--cy); }
+.card h3{ margin:16px 0 12px; font-size:16.5px; font-weight:600; }
+.card p{ font-size:13px; color:var(--dim); line-height:1.95; }
 
-  /* ---------- 平板 ---------- */
-  @media (max-width:1120px){
-    .cards.five{ grid-template-columns:repeat(3,minmax(0,1fr)); }
-  }
+.quote{
+  margin-top:64px; padding:32px 38px; border-left:2px solid var(--cy);
+  font-size:clamp(16px,1.8vw,22px); line-height:2; color:#cfe0ee;
+  background:linear-gradient(90deg, rgba(95,230,255,.06), rgba(95,230,255,0));
+}
+.quote.small{ margin-top:28px; font-size:13.5px; padding:20px 24px; border-left-color:rgba(95,230,255,.4); }
 
-  /* ---------- 手机 ---------- */
-  @media (max-width:760px){
-    nav{ padding:10px 14px; gap:10px; }
-    nav .logo{ font-size:12px; letter-spacing:.2em; }
-    nav .links{ display:none; }
-    nav .cta{ font-size:11.5px; padding:7px 12px; }
+table.spec{ width:100%; margin-top:50px; border-collapse:collapse; font-size:13.5px; }
+table.spec th, table.spec td{ padding:20px 18px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
+table.spec td:first-child{ color:var(--cy); font-size:12px; letter-spacing:.12em; white-space:nowrap; width:130px; }
+table.spec td:nth-child(2){ color:#c8d6e2; }
+table.spec td:nth-child(3){ color:var(--dim); line-height:1.9; }
 
-    .hero{ height:100svh; }
-    .hero .txt{ left:16px; right:16px; top:70px; }
-    .hero .k{ font-size:9px; letter-spacing:.12em; margin-bottom:10px; line-height:1.7; word-break:break-word; }
-    .hero h1{ font-size:26px; line-height:1.24; }
-    .hero p{ font-size:12.5px; line-height:1.85; margin-top:12px; }
-    .hero .cta{ margin-top:16px; gap:9px; flex-wrap:wrap; }
-    .hero .cta a{ font-size:12px; padding:9px 15px; }
-    .scrollhint{ display:none; }
+.buy{
+  margin-top:60px; padding:76px 44px; border-radius:26px; text-align:center;
+  background:radial-gradient(120% 120% at 50% 0%, rgba(95,230,255,.13), rgba(255,255,255,.02) 62%);
+  border:1px solid rgba(95,230,255,.2);
+}
+.buy h2{ font-size:clamp(20px,2.4vw,30px); font-weight:600; letter-spacing:.02em; }
+.buy p{ margin-top:22px; font-size:14px; color:var(--dim); line-height:2; }
+.buy .row{ margin-top:30px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.buy a{ text-decoration:none; font-size:13.5px; padding:13px 28px; border-radius:980px; letter-spacing:.04em; }
+.buy .p1{ color:#04121a; background:var(--cy); font-weight:600; }
+.buy .p2{ color:#cfe0ee; border:1px solid rgba(255,255,255,.2); }
 
-    .labels .lb{ font-size:10.5px; padding:3px 7px; }
+footer{
+  position:relative; z-index:3; padding:70px 34px 110px; text-align:center;
+  font-size:11px; color:#4d5866; letter-spacing:.14em;
+  background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.96) 40%);
+}
 
-    .styles{ bottom:112px; max-width:94vw; flex-wrap:wrap; justify-content:center; gap:5px; padding:6px 8px; }
-    .styles .cap{ display:none; }
-    .chip{ font-size:11px; padding:6px 10px; }
+#fatal{ position:fixed; inset:0; z-index:200; background:#05060a; color:#cfe0ee;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  padding:12vh 40px; white-space:pre-wrap; font-size:14px; line-height:2; }
 
-    .bar{ bottom:14px; max-width:94vw; gap:8px; padding:9px 12px; flex-wrap:wrap; justify-content:center; row-gap:8px; }
-    .bar .cap{ display:none; }
-    .slider{ width:52vw; }
-    .btn{ font-size:11.5px; padding:8px 12px; }
-    .sep{ display:none; }
-    .val{ display:none; }
+/* ================= 手机 ================= */
+@media (max-width:760px){
+  nav{ padding:10px 14px; gap:10px; }
+  nav .logo{ font-size:11.5px; letter-spacing:.2em; }
+  nav .links{ display:none; }
+  nav .cta{ font-size:11.5px; padding:7px 13px; }
 
-    section{ padding:64px 18px; }
-    .sec-d{ font-size:13px; line-height:2; }
-    .cards{ margin-top:36px; gap:14px; }
-    .cards.five{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .card{ padding:22px 18px; }
-    .quote{ padding:22px 20px; font-size:15px; }
-    table.spec th, table.spec td{ padding:13px 10px; font-size:12.5px; }
-    table.spec td:first-child, table.spec td:nth-child(2){ width:auto; }
-    .buy{ margin-top:48px; padding:34px 18px; }
-    .buy .row{ gap:9px; }
-    .buy a{ font-size:12.5px; padding:11px 18px; }
-  }
+  .hero{ height:100svh; }
+  .hero .txt{ left:16px; right:16px; top:74px; max-width:none; }
+  .hero .k{ font-size:9px; letter-spacing:.14em; margin-bottom:12px; line-height:1.7; }
+  .hero h1{ font-size:27px; line-height:1.24; }
+  .hero p{ font-size:12.5px; line-height:1.85; margin-top:14px; }
+  .hero .cta{ margin-top:18px; gap:9px; flex-wrap:wrap; }
+  .hero .cta a{ font-size:12px; padding:10px 16px; }
+  .scrollhint{ display:none; }
 
+  .labels .lb{ font-size:10px; padding:3px 7px; }
+
+  .styles{ bottom:110px; max-width:94vw; flex-wrap:wrap; justify-content:center; gap:5px; }
+  .styles .cap{ display:none; }
+  .chip{ font-size:11px; padding:6px 11px; }
+  .bar{ bottom:14px; max-width:94vw; gap:8px; padding:9px 12px; flex-wrap:wrap; justify-content:center; row-gap:8px; }
+  .bar .cap{ display:none; }
+  .slider{ width:52vw; }
+  .btn{ font-size:11.5px; padding:8px 13px; }
+  .sep, .val{ display:none; }
+
+  section{ padding:74px 18px; }
+  .eyebrow{ font-size:10px; letter-spacing:.26em; margin-bottom:16px; }
+  .display{ font-size:clamp(25px,6.8vw,34px); line-height:1.2; }
+  .lead{ margin-top:18px; font-size:13.5px; line-height:1.95; }
+  .h3{ font-size:20px; line-height:1.45; }
+
+  .split{ grid-template-columns:1fr; gap:32px; }
+  .split.rev .txt{ order:0; }
+  .panel{ padding:26px 22px; min-height:auto; }
+  .mini-big{ font-size:19px; }
+
+  .steps{ gap:28px; margin-top:42px; }
+  .stats{ margin-top:46px; gap:30px; }
+  .stat{ font-size:46px; }
+
+  .cards, .cards.three, .cards.four, .cards.five{ grid-template-columns:1fr; margin-top:36px; gap:14px; }
+  .card{ padding:24px 20px; }
+  .quote{ padding:22px 20px; font-size:15px; margin-top:40px; }
+
+  table.spec{ margin-top:34px; font-size:12.5px; }
+  table.spec th, table.spec td{ padding:14px 10px; }
+  table.spec td:first-child{ width:80px; font-size:11px; }
+
+  .buy{ margin-top:40px; padding:36px 18px; }
+  .buy a{ font-size:12.5px; padding:11px 20px; }
+  footer{ padding:50px 18px 80px; }
+}
+
+
+@media (max-width:760px){
+  body{ overflow-x:hidden; }
+  .display{ font-size:26px !important; line-height:1.26 !important; letter-spacing:-.01em !important; }
+  .display br{ display:block; }
+}
+
+@media (max-width:760px){
+  .split > *{ min-width:0 !important; }
+  .lead{ max-width:100% !important; }
+  section{ overflow:hidden; max-width:100vw; }
+  .panel{ overflow:hidden; }
+  table.spec{ table-layout:fixed; width:100%; }
+  table.spec td{ word-break:break-word; white-space:normal !important; }
+}
+
+@media (max-width:760px){
+  .split{ display:block !important; }
+  .split > *{ width:100% !important; max-width:100% !important; }
+  .panel{ margin-top:28px !important; }
+  .page, .band, section{ width:100% !important; max-width:100% !important; }
+  .lead, .display, .h3, .mini-big{ max-width:100% !important; }
+}
 </style>
 </head>
 <body>
@@ -231,13 +270,11 @@
 <nav>
   <div class="logo">STARRY <b>/</b> 万物识别罗盘</div>
   <div class="links">
-    <a href="#explode">结构拆解</a>
-    <a href="#insight">洞察</a>
-    <a href="#form">产品</a>
-    <a href="#plays">六种玩法</a>
+    <a href="#day">一天里</a>
+    <a href="#start">三十秒上手</a>
+    <a href="#privacy">照片</a>
+    <a href="#limits">边界</a>
     <a href="#spec">规格</a>
-    <a href="#spec">技术规格</a>
-    <a href="#buy">预约</a>
   </div>
   <a class="cta" href="#buy">预约体验</a>
 </nav>
@@ -264,131 +301,164 @@
 </div>
 
 <div class="page">
+
   <div class="band">
-    <section id="insight">
-      <div class="sec-k">01 · INSIGHT</div>
-      <div class="sec-t">讲解很多，<br>发现缺席</div>
-      <div class="sec-d">扫码就报出名字和全文，逛展只剩“看完”。日本 App「Dokoka」反着做——只给线索和距离，不报答案，必须亲自走到跟前才揭晓。上线 5 个月 8 万下载、免费榜第五。</div>
+    <section id="explode">
+      <div class="center">
+        <div class="eyebrow">拆 开 它</div>
+        <div class="display">六层，每一层都有理由</div>
+        <div class="lead">屏幕、机身、主板、电池、摄像头、背壳。拖动下面这条滑块，或者直接转一转。</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="band">
+    <section id="day">
+      <div class="eyebrow">一 天 里</div>
+      <div class="display">它会在三个地方<br>被你掏出来</div>
+
+      <div class="split" style="margin-top:84px">
+        <div class="txt">
+          <div class="eyebrow">09:40 · 展厅</div>
+          <h3 class="h3">上午，你只知道<br>玻璃柜里那件东西有刻度</h3>
+          <p class="lead">圆屏给你一句特征，机身转向那面柜子。走过去，按下正面的快门，它才把名字和一句来由告诉你——不是扫码，是先走过去。</p>
+        </div>
+        <div class="panel">
+          <div class="mini">屏幕这一秒显示</div>
+          <div class="mini-big">玻璃展柜里，<br>一件带刻度的旧物</div>
+          <div class="mini-sub">方向 ↗　距离 12 m　未识别</div>
+        </div>
+      </div>
+
+      <div class="split rev" style="margin-top:120px">
+        <div class="txt">
+          <div class="eyebrow">14:20 · 自然课</div>
+          <h3 class="h3">下午，孩子对着<br>一只不认识的虫子按快门</h3>
+          <p class="lead">它认得的不只是文物。标本、矿石、鸟、虫子——拍完给一个类别和一句好记的特征，孩子当场记住的，比背课文多。</p>
+        </div>
+        <div class="panel">
+          <div class="mini">识别结果</div>
+          <div class="mini-big">金龟子<br><span class="mini-tag">鞘翅目 · 常见</span></div>
+          <div class="mini-sub">外壳有金属光泽 · 白天活动</div>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:120px">
+        <div class="txt">
+          <div class="eyebrow">21:00 · 家里</div>
+          <h3 class="h3">晚上，你拿它<br>对着自己抽屉里的旧东西</h3>
+          <p class="lead">同一个动作，换一个场所。它不知道答案的时候会直接说不知道——那也是一种结果，比胡编一个名字好。</p>
+        </div>
+        <div class="panel">
+          <div class="mini">识别结果</div>
+          <div class="mini-big">不确定<br><span class="mini-tag">置信度偏低</span></div>
+          <div class="mini-sub">要不要补一张更近的照片？</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="band">
+    <section id="start">
+      <div class="eyebrow">三 十 秒</div>
+      <div class="display">第一次用，不需要说明书</div>
+      <div class="lead">开箱到认出第一件东西，四个动作。没有配对、没有下载 App、没有账号。</div>
+      <div class="steps">
+        <div class="step"><div class="num">01</div><h4>长按侧键</h4><p>屏幕亮起，罗盘图案转一圈，进入上次用的模式。</p></div>
+        <div class="step"><div class="num">02</div><h4>转动机身</h4><p>箭头一直指着目标方向，屏幕上是这一趟的第一条线索。</p></div>
+        <div class="step"><div class="num">03</div><h4>走到跟前</h4><p>距离缩到几米，屏幕开始呼吸式闪烁，提醒你可以拍了。</p></div>
+        <div class="step"><div class="num">04</div><h4>按下快门</h4><p>正面那颗蓝色按键。两秒后名字出来，配一句来由。</p></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="band">
+    <section id="privacy">
+      <div class="center">
+        <div class="eyebrow">照 片</div>
+        <div class="display">它在快门松开的那一刻<br>就把照片忘掉</div>
+        <div class="lead">板上不存原图。照片只上传一次，换回一个类别，然后从内存里清掉。别人拿到这台设备，翻不出你去过哪里、拍过什么。</div>
+      </div>
+      <div class="stats">
+        <div class="stat-item"><div class="stat">0<small>张</small></div><p>设备里留存的照片</p></div>
+        <div class="stat-item"><div class="stat">1<small>次</small></div><p>上传，只回传类别</p></div>
+        <div class="stat-item"><div class="stat">100<small>%</small></div><p>断网时可离线演示</p></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="band">
+    <section id="fail">
+      <div class="split">
+        <div class="txt">
+          <div class="eyebrow">认 错 了</div>
+          <h3 class="h3">它会有说不出名字的时候<br>所以我们准备了三道兜底</h3>
+          <p class="lead">不是每一件东西都能被认出来。与其硬答一个错的，不如老老实实承认，再把主动权交回给人。</p>
+        </div>
+        <div class="list">
+          <div class="li"><b>一 · 不确定就说不确定</b><span>置信度低时屏幕直接写"不确定"，并建议补一张更近、更正的照片，而不是猜。</span></div>
+          <div class="li"><b>二 · 给三个候选项</b><span>分不清的时候列出最像的三件，由你按侧键选一个，选完照样揭晓。</span></div>
+          <div class="li"><b>三 · 馆方可以补档案</b><span>后台给这件展品补一张主图和一段说明，第二天它就认得准了。</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="band">
+    <section id="content">
+      <div class="eyebrow">内 容</div>
+      <div class="display">线索和档案，<br>三条路都能写进来</div>
+      <div class="lead">一台设备能认多少东西，取决于往里写了多少。我们不想做成一个只有官方内容的封闭盒子。</div>
       <div class="cards three">
-        <div class="card"><div class="n">STEP 1</div><h3>信息不对称</h3><p>只给线索 + 距离，不报名字、不说答案。悬念从这一步开始。</p></div>
-        <div class="card"><div class="n">STEP 2</div><h3>身体执行</h3><p>必须亲自走到展品前，不能坐着点到。走过去本身就是参与。</p></div>
-        <div class="card"><div class="n">STEP 3</div><h3>到达揭晓</h3><p>走到附近，拍一下，才揭晓“你面前是谁”。</p></div>
-      </div>
-      <div class="quote">Dokoka 证明了“藏起答案”本身有价值。<br>我们要做的是——把它从 App 变成握在手里的实体，再加一枚会认东西的摄像头。</div>
-    </section>
-  </div>
-
-  <div class="band">
-    <section id="form">
-      <div class="sec-k">02 · PRODUCT</div>
-      <div class="sec-t">一枚能握住的万物罗盘</div>
-      <div class="sec-d">去掉底座和云台，把圆屏做成能握在掌心、挂上脖子的东西。加上摄像头，文物、物品、动物标本拍一下就能认。</div>
-      <div class="cards five">
-        <div class="card"><div class="n">01</div><h3>圆形 AMOLED 罗盘屏</h3><p>1.43 英寸 466×466，青蓝线索卡 + 方向，藏起展品名字。</p></div>
-        <div class="card"><div class="n">02</div><h3>机身整体转向</h3><p>转个身就是“展品在那边”，替代桌面云台，更自然。</p></div>
-        <div class="card"><div class="n">03</div><h3>短握柄 + 挂绳孔</h3><p>握在掌心或挂脖带走，约 80g，真正随身。</p></div>
-        <div class="card"><div class="n">04</div><h3>深空灰氧化铝 + 陶瓷白圈</h3><p>像专业罗盘、像潜水表，贴合科普展陈的气质。</p></div>
-        <div class="card"><div class="n">05</div><h3>背面摄像头 + 侧键</h3><p>对准展品拍一下就认；没有网络时用触控键选预置展品，照样能演示。</p></div>
+        <div class="card"><div class="n">策展人</div><h3>馆方自己写</h3><p>选 20 件展品，每件一句特征线索、一段三行的来由。后台填表，不用懂代码。</p></div>
+        <div class="card"><div class="n">老师</div><h3>课程包</h3><p>一条路线就是一份课程包：自然课认叶子，历史课认器物，地理课认岩石。</p></div>
+        <div class="card"><div class="n">参观者</div><h3>我来出题</h3><p>挑一件、留一句话，这台设备就变成别人要找的谜题。内容自己长出来。</p></div>
       </div>
     </section>
   </div>
 
   <div class="band">
-    <section id="loop">
-      <div class="sec-k">03 · THE LOOP</div>
-      <div class="sec-t">给线索 · 带你走 · 拍照认出它</div>
-      <div class="sec-d">把悬念结构实体化，每一步都由这件器物亲手完成。六种玩法共用同一套闭环。</div>
-      <div class="cards four">
-        <div class="card"><div class="n">出发</div><h3>给线索不给名字</h3><p>圆屏给方向 + 一句特征线索，机身转向那边。识别模式给展品特征，谜题玩法给谜面。</p></div>
-        <div class="card"><div class="n">途中</div><h3>转身指着展台</h3><p>像罗盘一样指向展品，距离随靠近缩短，但不提前报出身份。</p></div>
-        <div class="card"><div class="n">到达</div><h3>拍一下就认</h3><p>按侧键拍照上传云端识别：揭晓名字和一句故事、集章点亮一格、限时记录用时。</p></div>
-        <div class="card"><div class="n">续玩</div><h3>一键切换玩法</h3><p>模式转盘切到下一个玩法，同一套闭环换参数重跑。</p></div>
+    <section id="limits">
+      <div class="eyebrow">边 界</div>
+      <div class="display">它不适合做什么</div>
+      <div class="lead">写清楚这个，比多写十条卖点有用。</div>
+      <div class="cards four" style="margin-top:56px">
+        <div class="card"><h3>不做鉴定</h3><p>能告诉你这是什么类别，不说真假、不说值多少钱。鉴定要人来做。</p></div>
+        <div class="card"><h3>不替代说明牌</h3><p>它给的是"认出来"的那一下。系统性知识还是看展签和讲解。</p></div>
+        <div class="card"><h3>野外要挑场合</h3><p>深山没信号，识别会降级成离线档案；能演示，但认不全。</p></div>
+        <div class="card"><h3>不追全知</h3><p>三类对象：文物、物品、动物。不在范围内的，它会说不知道。</p></div>
       </div>
     </section>
   </div>
 
   <div class="band">
-    <section id="plays">
-      <div class="sec-k">04 · SIX WAYS TO EXPLORE</div>
-      <div class="sec-t">一枚罗盘，六种认物玩法</div>
-      <div class="sec-d">文物 / 物品 / 动物标本共用同一硬件与 UI。换玩法只换五个参数——线索形态、进度形式、揭晓内容、胜负规则、档案类型。不堆素材，就不会装不下。</div>
-      <div class="cards plays">
-        <div class="card"><div class="n">01 · 默认</div><h3>万物识别</h3><p>给线索，走到展品前揭晓身份。文物、物品、动物标本都能认。</p></div>
-        <div class="card"><div class="n">02 · 主推</div><h3>展品集章</h3><p>按顺序认出三类展品，集齐才揭晓主题，适合展馆动线。</p></div>
-        <div class="card"><div class="n">03 · 主推</div><h3>谜题识别</h3><p>先读谜面猜对象，到现场拍一下验证。答案是走到对的地方。</p></div>
-        <div class="card"><div class="n">04 · 进阶</div><h3>限时挑战</h3><p>计时竞速，按用时给 S / A / B 评级。</p></div>
-        <div class="card"><div class="n">05 · 进阶</div><h3>我来出题</h3><p>我选一件展品、留一句话，你来找。带一句留给下一个人的话。</p></div>
-        <div class="card"><div class="n">06 · 可选</div><h3>接力讲解</h3><p>一台设备分段传着用，一人讲一件，路线被同伴拆成几段。</p></div>
+    <section id="deploy">
+      <div class="eyebrow">落 地</div>
+      <div class="display">把一个馆装进来，三天</div>
+      <div class="lead">不需要布线、不需要信标、不需要改造展厅。一张桌子、一台笔记本、20 件展品。</div>
+      <div class="steps">
+        <div class="step"><div class="num">第 1 天</div><h4>选件</h4><p>和策展人走一圈，挑出 20 件"值得被认出来"的，拍主图、写一句特征。</p></div>
+        <div class="step"><div class="num">第 2 天</div><h4>建档</h4><p>后台录进三类档案，每件三行字。系统给出第一版路线与线索。</p></div>
+        <div class="step"><div class="num">第 3 天</div><h4>走一趟</h4><p>自己握着设备走完整条线，把认错的、走岔的当场改掉，然后交给第一批观众。</p></div>
       </div>
-    </section>
-  </div>
-
-  <div class="band">
-    <section id="feasible">
-      <div class="sec-k">05 · FEASIBILITY</div>
-      <div class="sec-t">每一项能力，都有硬件落点</div>
-      <div class="sec-d">万物识别功能严格收敛在指定硬件清单内：摄像头十几元、AI 放云端、信标和舵机云台全部省掉。复杂在机制编排，不在零件堆叠。</div>
-      <table class="spec">
-        <tr><th>硬件能力</th><th>对应功能</th><th>实现路径</th></tr>
-        <tr><td>1.43" 圆屏</td><td>线索 / 档案显示</td><td>LVGL 绘制线索文字、方向与对象名字、一句故事</td></tr>
-        <tr><td>机身朝向</td><td>实体指路</td><td>转动整个机身指向展品，无需舵机</td></tr>
-        <tr><td>OV2640 + Wi-Fi</td><td>拍照识别三类对象</td><td>按侧键拍照 → 上传云端视觉模型 → 返回类别揭晓档案，含活体动物</td></tr>
-        <tr><td>CST820 触控</td><td>断网降级</td><td>无网络时按侧键选预置展品，仍能揭晓，零成本可演示</td></tr>
-        <tr><td>ES8311 + 灯</td><td>揭晓仪式</td><td>认出对象时亮起 + 提示音</td></tr>
-        <tr><td>8MB Flash</td><td>六玩法 + 三类档案</td><td>玩法=参数剧本、三类档案纯文本 ≈160KB，占用不到 2%</td></tr>
-      </table>
-      <div class="quote small">能力边界：识别需要联网调用云端视觉模型（现场 Wi-Fi 或热点）。断网时以触控选择预置展品降级演示，不承诺离线通用识别。</div>
     </section>
   </div>
 
   <div class="band">
     <section id="spec">
-      <div class="sec-k">06 · SPECIFICATION</div>
-      <div class="sec-t">技术规格</div>
-      <div class="sec-d">基于 ESP32-S3 的圆屏手持终端，一块板 + 一枚摄像头撑起显示、方位、采集与交互。</div>
+      <div class="eyebrow">规 格</div>
+      <div class="display">技术规格</div>
       <table class="spec">
-        <tr><th>类别</th><th>参数</th><th>指标</th></tr>
-        <tr><td>主控</td><td>MCU</td><td>ESP32-S3-PICO-1-N8R8，Xtensa 32 位 LX7 双核，最高 240 MHz</td></tr>
-        <tr><td>存储</td><td>内存 / 存储</td><td>内置 512KB SRAM、384KB ROM，叠封 8MB Flash + 8MB PSRAM</td></tr>
-        <tr><td>无线</td><td>连接</td><td>2.4GHz Wi-Fi（802.11 b/g/n）+ 蓝牙 5（LE），板载天线</td></tr>
-        <tr><td>显示</td><td>面板</td><td>1.43 英寸圆形 AMOLED，466 × 466，16.7M 色</td></tr>
-        <tr><td>显示</td><td>亮度 / 对比度</td><td>600 cd/m²，对比度 10000:1，QSPI 接口，驱动 IC：CO5300</td></tr>
-        <tr><td>影像</td><td>摄像头</td><td>背面 OV2640 摄像头模组，按侧键拍照，图像经 Wi-Fi 上传云端视觉模型识别</td></tr>
-        <tr><td>触控</td><td>触摸</td><td>电容触控，I2C 接口，触控 IC：CST820</td></tr>
-        <tr><td>音频</td><td>输出 / 输入</td><td>ES8311 编解码 + 功放（MX1.25 喇叭接口）；ES7210 双麦阵列，支持降噪与回声消除</td></tr>
-        <tr><td>电源</td><td>电池</td><td>板载 MX1.25 2PIN 锂电池接口，3.7V 充放电；Type-C 充电与烧录</td></tr>
-        <tr><td>按键</td><td>按键 / 指示</td><td>侧面电源键（短按开机 / 长按关机）、正面中央蓝色快门键、可编程 LED（GPIO5）</td></tr>
-        <tr><td>扩展</td><td>接口</td><td>外露 1 路 I2C、1 路 UART、1 路 USB 焊盘，可外接传感器</td></tr>
-        <tr><td>开发</td><td>框架</td><td>Arduino IDE 与 ESP-IDF，提供 LVGL UI 例程与出厂固件</td></tr>
+        <tr><td>主控</td><td>ESP32-S3-PICO-1-N8R8，双核 240MHz</td></tr>
+        <tr><td>存储</td><td>512KB SRAM + 8MB Flash + 8MB PSRAM</td></tr>
+        <tr><td>屏幕</td><td>1.43" 圆形 AMOLED，466×466，600 cd/m²</td></tr>
+        <tr><td>触控</td><td>CST820 电容触控</td></tr>
+        <tr><td>影像</td><td>背面 OV2640，按快门拍照，云端识别</td></tr>
+        <tr><td>音频</td><td>ES8311 编解码 + ES7210 双麦阵列</td></tr>
+        <tr><td>连接</td><td>2.4G Wi-Fi + BLE 5.0</td></tr>
+        <tr><td>电源</td><td>500mAh 锂电，Type-C 充电</td></tr>
+        <tr><td>整机</td><td>约 80g，直径 60–70mm</td></tr>
       </table>
-    </section>
-  </div>
-
-  <div class="band">
-    <section id="diff">
-      <div class="sec-k">07 · DIFFERENTIATION</div>
-      <div class="sec-t">不是换功能，是换品类</div>
-      <div class="sec-d">从“念稿的讲解器”，到“带你认出它的罗盘”。</div>
-      <div class="cards four">
-        <div class="card"><div class="n">01</div><h3>藏起名字：扫码 → 认出来</h3><p>二维码一扫就报全文；我们把身份藏到最后。同样是看展，一个消灭惊喜，一个制造发现。</p></div>
-        <div class="card"><div class="n">02</div><h3>有身体：会转向的实体</h3><p>手机是屏幕里的图文；它握在手里、会转身指展台、到点亮起。手机给不了的在场感。</p></div>
-        <div class="card"><div class="n">03</div><h3>六种玩法：一枚不单调</h3><p>识别、集章、解谜、竞速、出题，一键切换。玩法是参数组合不是换设备。</p></div>
-        <div class="card"><div class="n">04</div><h3>能拍照：AI 上云，落地不重</h3><p>一枚十几元摄像头 + Wi-Fi 云端识别，就能认文物、物品、动物；舵机云台反而省掉。</p></div>
-      </div>
-    </section>
-  </div>
-
-  <div class="band">
-    <section id="roadmap">
-      <div class="sec-k">08 · ROADMAP</div>
-      <div class="sec-t">从 PPT 到实物，四步走完</div>
-      <div class="sec-d">每阶段有明确交付物，团队按角色分工，覆盖创意、结构、编程与表达。</div>
-      <div class="cards four">
-        <div class="card"><div class="n">STEP 1</div><h3>创意定稿</h3><p>锁定深空灰金属罗盘形象，完成三段式交互流程图与六种玩法的展品线索 / 谜面内容。<br><br>交付：创意提案 + 玩法剧本</p></div>
-        <div class="card"><div class="n">STEP 2</div><h3>结构与装配</h3><p>3D 打印金属质感外壳与握柄、装配挂绳；安装 OV2640 摄像头，预审 3–5 件展品的线索与档案。<br><br>交付：可握持实物 + 摄像头样机</p></div>
-        <div class="card"><div class="n">STEP 3</div><h3>编程烧录</h3><p>LVGL 线索 / 箭头 / 揭晓 UI，摄像头采集 + Wi-Fi 上云识别，模式转盘参数切换，六种玩法实地联调。<br><br>交付：六玩法固化的万物罗盘</p></div>
-        <div class="card"><div class="n">STEP 4</div><h3>路演准备</h3><p>撰写设计说明文档，录制 3 分钟“切两种玩法认一件展品”的逛展演示视频。<br><br>交付：说明文档 + 演示视频</p></div>
-      </div>
     </section>
   </div>
 
