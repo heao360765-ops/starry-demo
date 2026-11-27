@@ -14,7 +14,7 @@ body{
   -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:antialiased;
 }
 #app{ position:fixed; inset:0; z-index:0; }
-canvas{ display:block; }
+canvas{ display:block; touch-action:pan-y; }
 
 /* ---------- 顶栏 ---------- */
 nav{
@@ -45,10 +45,16 @@ nav .cta{
 .hero .cta .a1{ color:#04121a; background:var(--cy); font-weight:600; }
 .hero .cta .a2{ color:#cfe0ee; border:1px solid rgba(255,255,255,.22); }
 .scrollhint{
-  position:absolute; left:50%; bottom:120px; transform:translateX(-50%);
-  font-size:10px; letter-spacing:.3em; color:#5d6a77;
-  animation:bob 2.4s ease-in-out infinite;
+  position:absolute; left:50%; bottom:170px; transform:translateX(-50%);
+  display:inline-flex; align-items:center; gap:9px;
+  padding:10px 20px; border-radius:980px; text-decoration:none;
+  color:#d7e8f3; font-size:12.5px; letter-spacing:.08em;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(10px); pointer-events:auto;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
 }
+.scrollhint .chev{ color:var(--cy); font-size:14px; animation:bob2 1.7s ease-in-out infinite; }
+@keyframes bob2{ 0%,100%{ transform:translateY(-2px); } 50%{ transform:translateY(4px); } }
 @keyframes bob{ 0%,100%{transform:translate(-50%,0);} 50%{transform:translate(-50%,8px);} }
 
 /* ---------- 拆解控制条 ---------- */
@@ -197,7 +203,7 @@ footer{
   .hero p{ font-size:12.5px; line-height:1.85; margin-top:14px; }
   .hero .cta{ margin-top:18px; gap:9px; flex-wrap:wrap; }
   .hero .cta a{ font-size:12px; padding:10px 16px; }
-  .scrollhint{ display:none; }
+  .scrollhint{ display:inline-flex; bottom:200px; font-size:11.5px; padding:9px 16px; }
 
   .labels .lb{ font-size:10px; padding:3px 7px; }
 
@@ -286,7 +292,7 @@ footer{
     <p>一枚握在手里、带摄像头的圆屏罗盘。只给线索，不报名字——走到展品前拍一下，它才告诉你这是谁。<br>文物、物品、动物标本都认得。正面那颗蓝色按键是快门，侧边是电源。<br>下拉看它的结构，或者直接拖动拆开。</p>
     <div class="cta"><a class="a1" href="#buy">预约体验</a><a class="a2" href="#feature">看看它怎么做的</a></div>
   </div>
-  <div class="scrollhint">S C R O L L</div>
+  <a class="scrollhint" id="scrollhint" href="#day"><span class="chev">↓</span> 向下滑，看它怎么用</a>
 </div>
 
 <div class="styles" id="styles"><div class="cap">屏幕</div></div>
@@ -677,16 +683,37 @@ function updateCam() {
 }
 updateCam();
 const el = renderer.domElement;
-el.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; el.setPointerCapture(e.pointerId); });
+let dragStart = null, committed = false;
+function overModel(x, y) {
+  if (!window.__modelPx) return true;
+  const c = window.__modelPx;
+  return Math.hypot(x - c.x, y - c.y) < c.r;
+}
+el.addEventListener('pointerdown', e => {
+  if (!overModel(e.clientX, e.clientY)) return;
+  dragStart = { x: e.clientX, y: e.clientY };
+  committed = false;
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  try { el.setPointerCapture(e.pointerId); } catch (_) {}
+});
 el.addEventListener('pointerup', () => { dragging = false; });
 el.addEventListener('pointercancel', () => { dragging = false; });
 el.addEventListener('pointermove', e => {
   if (!dragging) return;
+  if (!committed) {
+    const dx = Math.abs(e.clientX - dragStart.x), dy = Math.abs(e.clientY - dragStart.y);
+    if (dx < 4 && dy < 4) return;
+    // 竖向为主 -> 交给页面滚动，不转模型
+    if (dy > dx * 1.2) { dragging = false; return; }
+    committed = true;
+  }
   theta -= (e.clientX - lastX) * 0.006;
   phi = Math.max(0.25, Math.min(2.55, phi - (e.clientY - lastY) * 0.005));
   lastX = e.clientX; lastY = e.clientY; updateCam();
 });
 el.addEventListener('wheel', e => {
+  // 只有指针在模型身上时才吃掉滚轮，否则让页面正常滚动
+  if (!overModel(e.clientX, e.clientY)) return;
   e.preventDefault();
   radius = Math.max(11, Math.min(52, radius * (1 + Math.sign(e.deltaY) * 0.09)));
   updateCam();
@@ -811,6 +838,14 @@ function animate() {
     f.d.style.top = ((-tmpV.y * 0.5 + 0.5) * innerHeight) + 'px';
     f.d.style.opacity = (uiHidden || t > 0.15) ? 0 : 0.9;
   }
+  // 模型在屏幕上的大致范围（用于判断手势是否落在模型上）
+  const c0 = new THREE.Vector3(0, 0, 0).project(camera);
+  const c1 = new THREE.Vector3(0, 5.4, 0).project(camera);
+  const cx = (c0.x * 0.5 + 0.5) * innerWidth;
+  const cy = (-c0.y * 0.5 + 0.5) * innerHeight;
+  const ry = Math.abs((-c1.y * 0.5 + 0.5) * innerHeight - cy);
+  window.__modelPx = { x: cx, y: cy, r: Math.max(ry * 1.15, 120) };
+
   renderer.render(scene, camera);
 }
 addEventListener('resize', () => {
